@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+
+
+	<flow name="nasaapod-main">
+		<http:listener
+			config-ref="nasaapodHttpListenerConfig"
+			path="/api/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:router config-ref="nasaapodConfig" />
+		<error-handler ref="api-kit-error-handler" />
+
+	</flow>
+	<flow name="nasaapod-console">
+		<http:listener
+			config-ref="nasaapodHttpListenerConfig"
+			path="/console/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:console config-ref="nasaapodConfig" />
+		<error-handler ref="console-error-handler" />
+
+	</flow>
+	<flow name="get:\apod:nasaapod-config">
+		<set-variable value='#[attributes.queryParams."date"]' doc:name="date" doc:id="6bd66959-0c97-43fa-93c6-c4ddbebc3fbd" variableName="date" />
+		<set-variable value='#[attributes.queryParams."api_key"]' doc:name="api_key" doc:id="4c5755e9-878b-44d9-b68e-db16c9d6c851" variableName="api_key" />
+		<http:request method="GET" doc:name="Request" doc:id="1417715b-3917-4ffb-84ae-c4f42881a945" config-ref="httpRequestConfiguration" path="/planetary/apod">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"date" : vars.date,
+	"api_key" : vars.api_key
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" message="get:\apod:nasaapod-config" />
+    </flow></mule>
