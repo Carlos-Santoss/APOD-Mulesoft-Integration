@@ -23,7 +23,7 @@
 				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
 			</http:error-response>
 		</http:listener>
-		<apikit:router config-ref="nasaapodConfig" />
+		<apikit:router config-ref="nasaapod-config" />
 		<error-handler ref="api-kit-error-handler" />
 
 	</flow>
@@ -41,7 +41,7 @@
 				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
 			</http:error-response>
 		</http:listener>
-		<apikit:console config-ref="nasaapodConfig" />
+		<apikit:console config-ref="nasaapod-config" />
 		<error-handler ref="console-error-handler" />
 
 	</flow>

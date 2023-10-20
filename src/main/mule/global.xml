@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			port="8081" />
 	</http:listener-config>
 	<apikit:config
-		name="nasaapodConfig"
+		name="nasaapod-config"
 		api="resource::e7edc62f-36ad-4cd1-a7b3-daf53daf267e:nasaapod:1.0.0:raml:zip:nasaapod.raml"
 		outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
